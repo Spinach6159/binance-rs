@@ -149,6 +149,7 @@ impl<'a> WebSockets<'a> {
         while running.load(Ordering::Relaxed) {
             if let Some(ref mut socket) = self.socket {
                 let message = socket.0.read_message()?;
+
                 match message {
                     Message::Text(msg) => {
                         if let Err(e) = self.handle_msg(&msg) {
@@ -156,9 +157,14 @@ impl<'a> WebSockets<'a> {
                         }
                     }
                     Message::Ping(_) => {
+                        println!("Ping received");
+                        socket.0.write_message(Message::Pong(message.into_data())).unwrap();
                         socket.0.write_message(Message::Pong(vec![])).unwrap();
                     }
-                    Message::Pong(_) | Message::Binary(_) | Message::Frame(_) => (),
+                    Message::Pong(_) | Message::Binary(_) | Message::Frame(_) => {
+                        println!("Pong received");
+                        ()
+                    },
                     Message::Close(e) => bail!(format!("Disconnected {:?}", e)),
                 }
             }

@@ -200,10 +200,16 @@ impl<'a> FuturesWebSockets<'a> {
                             bail!(format!("Error on handling stream message: {}", e));
                         }
                     }
+
                     Message::Ping(_) => {
+                        println!("Ping received");
+                        socket.0.write_message(Message::Pong(message.into_data())).unwrap();
                         socket.0.write_message(Message::Pong(vec![])).unwrap();
                     }
-                    Message::Pong(_) | Message::Binary(_) | Message::Frame(_) => (),
+                    Message::Pong(_) | Message::Binary(_) | Message::Frame(_) => {
+                        println!("Pong received");
+                        ()
+                    },
                     Message::Close(e) => bail!(format!("Disconnected {:?}", e)),
                 }
             }
