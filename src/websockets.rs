@@ -157,7 +157,7 @@ impl<'a> WebSockets<'a> {
                         }
                     }
                     Message::Ping(_) => {
-                        println!("Ping received");
+                        // println!("Ping received");
                         socket.0.write_message(Message::Pong(message.into_data())).unwrap();
                         socket.0.write_message(Message::Pong(vec![])).unwrap();
                     }
